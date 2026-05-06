@@ -1,11 +1,13 @@
 import requests
 
 def get_prices():
-    crypto_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd").json()
-    btc = crypto_data["bitcoin"]["usd"]
-    eth = crypto_data["ethereum"]["usd"]
+    prices = {}
 
-    return btc, eth
+    crypto_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd").json()
+    prices["btc"] = crypto_data["bitcoin"]["usd"]
+    prices["eth"] = crypto_data["ethereum"]["usd"]
+
+    return prices
 
 def main():
     print(get_prices())
