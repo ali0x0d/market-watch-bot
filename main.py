@@ -16,6 +16,12 @@ def get_prices():
     prices["silver"] = assets.tickers["SI=F"].fast_info['last_price']
     prices["oil"] = assets.tickers["CL=F"].fast_info['last_price']
 
+    # usdt
+    nobitex_data = requests.get(
+        "https://apiv2.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=rls"
+    ).json()
+    prices["usdt"] = int(nobitex_data["stats"]["usdt-rls"]["latest"])
+
     return prices
 
 def main():
