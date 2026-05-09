@@ -1,5 +1,15 @@
+import os
+import asyncio
+
 import requests
 import yfinance as yf
+from dotenv import load_dotenv
+from telegram import Bot
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = os.getenv("CHANNEL_ID")
 
 def get_prices():
     prices = {}
@@ -24,8 +34,9 @@ def get_prices():
 
     return prices
 
-def main():
-    print(get_prices())
+async def main():
+    bot = Bot(token=BOT_TOKEN)
+    await bot.send_message(chat_id=CHANNEL_ID, text=get_prices())
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
