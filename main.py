@@ -1,5 +1,7 @@
 import os
 import asyncio
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import requests
 import yfinance as yf
@@ -10,6 +12,8 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHANNEL_ID = os.getenv("CHANNEL_ID")
+
+BOT_TZ = ZoneInfo(os.getenv("BOT_TZ", "Asia/Tehran"))
 
 def get_prices():
     prices = {}
@@ -36,7 +40,14 @@ def get_prices():
 
 async def main():
     bot = Bot(token=BOT_TOKEN)
-    await bot.send_message(chat_id=CHANNEL_ID, text=get_prices())
+
+    while True:
+        now = datetime.now(BOT_TZ)
+        next_hour = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
+        wait_seconds = (next_hour - now).total_seconds()
+        await asyncio.sleep(wait_seconds)
+
+        await bot.send_message(chat_id=CHANNEL_ID, text=get_prices())
 
 if __name__ == "__main__":
     asyncio.run(main())
