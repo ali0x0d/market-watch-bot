@@ -15,6 +15,19 @@ CHANNEL_ID = os.getenv("CHANNEL_ID")
 
 BOT_TZ = ZoneInfo(os.getenv("BOT_TZ", "Asia/Tehran"))
 
+def format_price_message(prices):
+    now = datetime.now(BOT_TZ).strftime("%Y-%m-%d %H:%M")
+
+    return (
+        f"🕒 {now}\n\n"
+        f" ₿  BTC:     ${prices['btc']:,.0f}\n"
+        f" ⟠  ETH:     ${prices['eth']:,.0f}\n\n"
+        f"🥇 Gold:    ${prices['gold']:,.0f}\n"
+        f"🥈 Silver:  ${prices['silver']:,.2f}\n"
+        f"🛢 Oil:       ${prices['oil']:,.2f}\n\n"
+        f"💵 USDT:  {prices['usdt']/10:,.0f} IRT"
+    )
+
 def get_prices():
     prices = {}
 
@@ -47,7 +60,9 @@ async def main():
         wait_seconds = (next_hour - now).total_seconds()
         await asyncio.sleep(wait_seconds)
 
-        await bot.send_message(chat_id=CHANNEL_ID, text=get_prices())
+        prices = get_prices()
+        msg = format_price_message(prices)
+        await bot.send_message(chat_id=CHANNEL_ID, text=msg)
 
 if __name__ == "__main__":
     asyncio.run(main())
