@@ -3,10 +3,10 @@ import asyncio
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-import requests
-import yfinance as yf
 from dotenv import load_dotenv
 from telegram import Bot
+
+from market_data import get_crypto_prices, get_commodity_prices, get_usdt_price
 
 load_dotenv()
 
@@ -28,28 +28,14 @@ def format_price_message(prices):
         f"💵 USDT:  {prices['usdt']/10:,.0f} IRT"
     )
 
-def get_prices():
-    prices = {}
+async def get_prices():
+    crypto_prices, commodity_prices, usdt_price = await asyncio.gather(
+        asyncio.to_thread(get_crypto_prices),
+        asyncio.to_thread(get_commodity_prices),
+        asyncio.to_thread(get_usdt_price),
+    )
 
-    # btc, eth
-    crypto_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd").json()
-    prices["btc"] = crypto_data["bitcoin"]["usd"]
-    prices["eth"] = crypto_data["ethereum"]["usd"]
-
-    # gold, silver, oil
-    symbols = ["GC=F", "SI=F", "CL=F"]
-    assets = yf.Tickers(symbols)
-    prices["gold"] = assets.tickers["GC=F"].fast_info['last_price']
-    prices["silver"] = assets.tickers["SI=F"].fast_info['last_price']
-    prices["oil"] = assets.tickers["CL=F"].fast_info['last_price']
-
-    # usdt
-    nobitex_data = requests.get(
-        "https://apiv2.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=rls"
-    ).json()
-    prices["usdt"] = int(nobitex_data["stats"]["usdt-rls"]["latest"])
-
-    return prices
+    return {**crypto_prices, **commodity_prices, **usdt_price}
 
 async def main():
     bot = Bot(token=BOT_TOKEN)
@@ -60,7 +46,7 @@ async def main():
         wait_seconds = (next_hour - now).total_seconds()
         await asyncio.sleep(wait_seconds)
 
-        prices = get_prices()
+        prices = await get_prices()
         msg = format_price_message(prices)
         await bot.send_message(chat_id=CHANNEL_ID, text=msg)
 
