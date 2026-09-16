@@ -2,21 +2,21 @@ import requests
 import yfinance as yf
 
 def get_crypto_prices():
-    # btc, eth
-    crypto_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd", timeout=10).json()
+    # btc, eth, gold (PAXG)
+    crypto_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,pax-gold&vs_currencies=usd", timeout=10).json()
 
     return {
         "btc": crypto_data["bitcoin"]["usd"],
         "eth": crypto_data["ethereum"]["usd"],
+        "gold": crypto_data["pax-gold"]["usd"],
     }
 
 def get_commodity_prices():
-    # gold, silver, oil
-    symbols = ["GC=F", "SI=F", "CL=F"]
+    # silver, oil
+    symbols = ["SI=F", "CL=F"]
     assets = yf.Tickers(symbols)
 
     return {
-        "gold": assets.tickers["GC=F"].fast_info['last_price'],
         "silver": assets.tickers["SI=F"].fast_info['last_price'],
         "oil": assets.tickers["CL=F"].fast_info['last_price'],
     }
