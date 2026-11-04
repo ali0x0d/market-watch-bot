@@ -12,13 +12,13 @@ def get_crypto_prices():
     }
 
 def get_commodity_prices():
-    # silver, oil
-    symbols = ["SI=F", "CL=F"]
+    # silver, oil (Brent)
+    symbols = ["SI=F", "BZ=F"]
     assets = yf.Tickers(symbols)
 
     return {
         "silver": assets.tickers["SI=F"].fast_info['last_price'],
-        "oil": assets.tickers["CL=F"].fast_info['last_price'],
+        "oil": assets.tickers["BZ=F"].fast_info['last_price'],
     }
 
 def get_usdt_price():

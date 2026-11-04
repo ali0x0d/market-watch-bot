@@ -1,6 +1,6 @@
 # Market Watch Bot
 
-A small Telegram bot that posts an hourly market snapshot to a channel: Bitcoin, Ethereum, gold, silver, crude oil, and the USDT/IRT rate.
+A small Telegram bot that posts an hourly market snapshot to a channel: Bitcoin, Ethereum, gold, silver, Brent crude oil, and the USDT/IRT rate.
 
 ## What it posts
 
@@ -26,7 +26,7 @@ At the top of every hour (in the configured timezone) the bot sends a message li
 | BTC, ETH | [CoinGecko](https://www.coingecko.com/en/api) | `bitcoin`, `ethereum` |
 | Gold | CoinGecko (via [PAX Gold](https://paxos.com/paxgold/)) | `pax-gold` |
 | Silver | Yahoo Finance ([yfinance](https://github.com/ranaroussi/yfinance)) | `SI=F` |
-| Crude oil (WTI) | Yahoo Finance (yfinance) | `CL=F` |
+| Crude oil (Brent) | Yahoo Finance (yfinance) | `BZ=F` |
 | USDT / IRT | [Nobitex](https://nobitex.ir/) | `usdt-rls` |
 
 Nobitex reports the USDT price in rials; the bot divides by 10 to display it in toman (IRT).
